@@ -1,10 +1,9 @@
 from datetime import datetime
 import pytz
 from google.adk import Agent
-from google.adk.tools import AnthropicTool
 
 
-def get_current_time_impl(city: str) -> dict:
+def get_current_time(city: str) -> dict:
     """Returns the actual current time in a specified city.
     Args:
         city: The name of the city to get the time for (e.g., 'New York', 'London', 'Tokyo')
@@ -45,25 +44,7 @@ def get_current_time_impl(city: str) -> dict:
         }
 
 
-# Define the tool for ADK
-get_current_time_tool = AnthropicTool(
-    name="get_current_time",
-    description="Get the current time in a specific city. Useful when users ask about the current time in different locations around the world.",
-    input_schema={
-        "type": "object",
-        "properties": {
-            "city": {
-                "type": "string",
-                "description": "The name of the city to get the time for (e.g., 'New York', 'London', 'Tokyo')"
-            }
-        },
-        "required": ["city"]
-    },
-    function=get_current_time_impl
-)
-
-
-# Create the ADK agent
+# Create the ADK agent with the function as a tool
 root_agent = Agent(
     name="TimeZoneAgent",
     model="claude-3-5-sonnet-20241022",
@@ -72,5 +53,5 @@ root_agent = Agent(
 Available cities: New York, London, Tokyo, Paris, Sydney, Dubai, Singapore, Los Angeles, Chicago, Toronto.
 
 When a user asks about the time in a city, use the get_current_time tool to fetch the current time.""",
-    tools=[get_current_time_tool]
+    tools=[get_current_time]
 )
