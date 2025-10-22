@@ -1,8 +1,10 @@
 from datetime import datetime
 import pytz
-from typing import Any
+from google.adk import Agent
+from google.adk.tools import AnthropicTool
 
-def get_current_time(city: str) -> dict:
+
+def get_current_time_impl(city: str) -> dict:
     """Returns the actual current time in a specified city.
     Args:
         city: The name of the city to get the time for (e.g., 'New York', 'London', 'Tokyo')
@@ -22,8 +24,7 @@ def get_current_time(city: str) -> dict:
         "chicago": "America/Chicago",
         "toronto": "America/Toronto",
     }
-    
-    
+
     city_lower = city.lower()
     if city_lower in city_timezones:
         tz = pytz.timezone(city_timezones[city_lower])
@@ -44,34 +45,32 @@ def get_current_time(city: str) -> dict:
         }
 
 
-# Tool schema for Anthropic API
-TOOLS = [
-    {
-        "name": "get_current_time",
-        "description": "Get the current time in a specific city. Useful when users ask about the current time in different locations around the world.",
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "city": {
-                    "type": "string",
-                    "description": "The name of the city to get the time for (e.g., 'New York', 'London', 'Tokyo')"
-                }
-            },
-            "required": ["city"]
-        }
-    }
-]
+# Define the tool for ADK
+get_current_time_tool = AnthropicTool(
+    name="get_current_time",
+    description="Get the current time in a specific city. Useful when users ask about the current time in different locations around the world.",
+    input_schema={
+        "type": "object",
+        "properties": {
+            "city": {
+                "type": "string",
+                "description": "The name of the city to get the time for (e.g., 'New York', 'London', 'Tokyo')"
+            }
+        },
+        "required": ["city"]
+    },
+    function=get_current_time_impl
+)
 
 
-def process_tool_call(tool_name: str, tool_input: dict[str, Any]) -> Any:
-    """Process a tool call and return the result.
-    Args:
-        tool_name: The name of the tool to call
-        tool_input: The input parameters for the tool
-    Returns:
-        The result of the tool execution
-    """
-    if tool_name == "get_current_time":
-        return get_current_time(**tool_input)
-    else:
-        return {"status": "error", "message": f"Unknown tool: {tool_name}"}
+# Create the ADK agent
+root_agent = Agent(
+    name="TimeZoneAgent",
+    model="claude-3-5-sonnet-20241022",
+    system_prompt="""You are a helpful time zone assistant. You can tell users the current time in different cities around the world.
+
+Available cities: New York, London, Tokyo, Paris, Sydney, Dubai, Singapore, Los Angeles, Chicago, Toronto.
+
+When a user asks about the time in a city, use the get_current_time tool to fetch the current time.""",
+    tools=[get_current_time_tool]
+)
