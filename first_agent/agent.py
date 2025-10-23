@@ -44,7 +44,7 @@ def get_current_time(city: str) -> str:
 # Create the ADK agent with correct parameters
 root_agent = Agent(
     name="TimeZoneAgent",
-    model="models/gemini-1.5-flash",
+    model="gemini-1.5-flash",
     instruction="""You are a helpful time zone assistant. You can tell users the current time in different cities around the world.
 
 Available cities: New York, London, Tokyo, Paris, Sydney, Dubai, Singapore, Los Angeles, Chicago, Toronto.
