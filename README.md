@@ -1,10 +1,10 @@
 # Time Zone Agent
 
-A simple example agent built with Anthropic's SDK that demonstrates how to create an AI agent with custom tools. This agent can tell you the current time in different cities around the world.
+A simple example agent built with Google's Agent Development Kit (ADK) that demonstrates how to create an AI agent with custom tools. This agent can tell you the current time in different cities around the world.
 
 ## What This Example Teaches
 
-This project demonstrates the core concepts of building an agent with the Anthropic SDK:
+This project demonstrates the core concepts of building an agent with Google's ADK and Gemini:
 
 1. **Tool Definition**: How to define tools (functions) that the AI can use
 2. **Tool Schema**: How to structure tool descriptions so the AI knows when and how to use them
@@ -35,7 +35,8 @@ This project demonstrates the core concepts of building an agent with the Anthro
 ## Prerequisites
 
 - Python 3.8 or higher
-- An Anthropic API key
+- A Google API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
+- Google Agent Development Kit (ADK)
 
 ## Installation
 
@@ -48,25 +49,28 @@ cd first_agent
 2. Install dependencies:
 ```bash
 pip install -r requirements.txt
+pip install google-adk
 ```
 
 3. Set up your API key:
 
 Create a `.env` file in the project root:
 ```bash
-ANTHROPIC_API_KEY=your_api_key_here
+GOOGLE_API_KEY="your_google_api_key_here"
+GOOGLE_GENAI_USE_VERTEXAI=FALSE
 ```
 
-Or export it as an environment variable:
+Or copy the example file and edit it:
 ```bash
-export ANTHROPIC_API_KEY=your_api_key_here
+cp .env.example .env
+# Then edit .env with your actual API key
 ```
 
 ## Usage
 
-Run the agent:
+Run the agent using ADK:
 ```bash
-python main.py
+adk run first_agent
 ```
 
 Example conversation:
@@ -180,12 +184,19 @@ User sees response
 
 ## Troubleshooting
 
-**"ANTHROPIC_API_KEY not found"**
-- Make sure your `.env` file exists and contains the key
-- Or export it as an environment variable
+**"GOOGLE_API_KEY not found"**
+- Make sure your `.env` file exists in the project root (not in `first_agent/` subdirectory)
+- Verify the .env file contains both `GOOGLE_API_KEY` and `GOOGLE_GENAI_USE_VERTEXAI=FALSE`
+- Get your API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
+
+**"Model not found" or 404 errors**
+- Make sure you have `GOOGLE_GENAI_USE_VERTEXAI=FALSE` in your .env file
+- This tells ADK to use Google AI Studio instead of Vertex AI
+- Verify your model name is `gemini-1.5-flash-002` in `first_agent/agent.py`
 
 **"Module not found"**
 - Run `pip install -r requirements.txt`
+- Run `pip install google-adk`
 - Make sure you're in the project directory
 
 **"City not found"**
@@ -194,9 +205,9 @@ User sees response
 
 ## Learning Resources
 
-- [Anthropic API Documentation](https://docs.anthropic.com)
-- [Tool Use Guide](https://docs.anthropic.com/claude/docs/tool-use)
-- [Python SDK](https://github.com/anthropics/anthropic-sdk-python)
+- [Google ADK Documentation](https://google.github.io/adk-docs/)
+- [Gemini API Documentation](https://ai.google.dev/gemini-api/docs)
+- [Google AI Studio](https://aistudio.google.com/)
 
 ## License
 
